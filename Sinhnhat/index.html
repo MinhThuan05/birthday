@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Sinh Nhật!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #0d0d0d;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .message-box {
+            z-index: 10;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 107, 129, 0.2);
+            max-width: 90%;
+            width: 400px;
+        }
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            border: 4px solid #ff6b81;
+            box-shadow: 0 0 20px #ff4757;
+            overflow: hidden;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #ff6b81;
+            text-shadow: 0 0 15px #ff4757, 0 0 30px #ff4757;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #f1f2f6;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        /* THAY ĐỔI: CSS CHO NÚT BẬT NHẠC */
+        .music-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+        }
+        .music-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="message-box">
+        <div class="avatar-container">
+            <!-- Thay link ảnh của bạn tại đây -->
+            <img src="happy.png" alt="Ảnh sinh nhật">
+        </div>
+        
+        <h1>Happy Birthday! 🎉</h1>
+        <p>Chúc bạn một tuổi mới tràn đầy niềm vui, sức khỏe và thành công!</p>
+        
+        <!-- THAY ĐỔI: THÊM NÚT BẬT NHẠC VÀ THẺ AUDIO -->
+        <button class="music-btn" id="playBtn">🎵 Bật nhạc sinh nhật</button>
+        <audio id="bgMusic" loop>
+            <source src="bayside-breeze.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <canvas id="birthday"></canvas>
+
+    <script>
+        // XỬ LÝ SỰ KIỆN PHÁT NHẠC KHI BẤM NÚT
+        const playBtn = document.getElementById('playBtn');
+        const audio = document.getElementById('bgMusic');
+
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = "⏸️ Tắt nhạc";
+                playBtn.style.background = "linear-gradient(45deg, #2ed573, #7bed9f)"; // Đổi nút thành màu xanh khi phát
+            } else {
+                audio.pause();
+                playBtn.innerText = "🎵 Bật nhạc sinh nhật";
+                playBtn.style.background = "linear-gradient(45deg, #ff4757, #ff6b81)"; // Trở lại màu đỏ
+            }
+        });
+
+        // Hiệu ứng pháo hoa giữ nguyên
+        const canvas = document.getElementById('birthday');const ctx = canvas.getContext('2d');let width = canvas.width = window.innerWidth;let height = canvas.height = window.innerHeight;window.addEventListener('resize', () => {width = canvas.width = window.innerWidth;height = canvas.height = window.innerHeight;});class Firework {constructor() {this.x = Math.random() * width;this.y = height;this.sx = Math.random() * 3 - 1.5;this.sy = -(Math.random() * 4 + 4);this.size = Math.random() * 2 + 1;this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;this.exploded = false;this.particles = [];}update() {if (!this.exploded) {this.x += this.sx;this.y += this.sy;this.sy += 0.05;if (this.sy >= 0) {this.exploded = true;for (let i = 0; i < 40; i++) {this.particles.push(new Particle(this.x, this.y, this.color));}}} else {this.particles.forEach(p => p.update());}}draw() {if (!this.exploded) {ctx.fillStyle = this.color;ctx.beginPath();ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);ctx.fill();} else {this.particles.forEach(p => p.draw());}}}class Particle {constructor(x, y, color) {this.x = x;this.y = y;this.color = color;const angle = Math.random() * Math.PI * 2;const speed = Math.random() * 4 + 1;this.vx = Math.cos(angle) * speed;this.vy = Math.sin(angle) * speed;this.alpha = 1;this.decay = Math.random() * 0.015 + 0.010;}update() {this.x += this.vx;this.y += this.vy;this.vy += 0.03;this.alpha -= this.decay;}draw() {ctx.save();ctx.globalAlpha = Math.max(0, this.alpha);ctx.fillStyle = this.color;ctx.beginPath();ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);ctx.fill();ctx.restore();}}let fireworks = [];function animate() {ctx.fillStyle = 'rgba(13, 13, 13, 0.2)';ctx.fillRect(0, 0, width, height);if (Math.random() < 0.05) {fireworks.push(new Firework());}fireworks.forEach((fw, index) => {fw.update();fw.draw();if (fw.exploded && fw.particles.every(p => p.alpha <= 0)) {fireworks.splice(index, 1);}});requestAnimationFrame(animate);}animate();
+    </script>
+</body>
+</html>
